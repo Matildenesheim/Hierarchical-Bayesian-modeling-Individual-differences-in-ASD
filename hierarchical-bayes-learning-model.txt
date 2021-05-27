@@ -1,0 +1,122 @@
+model {
+
+  beta_lambda0 ~ dnorm(0,1)
+  beta_lambdaAQ ~ dnorm(0,1)
+
+  beta_gamma0 ~ dnorm(0,1)
+  beta_gammaAQ ~ dnorm(0,1)
+  
+  beta_theta0 ~ dnorm(0,1)
+  beta_thetaAQ ~ dnorm(0,1)
+
+  for (s in 1:n_subs){
+    
+    # linear models AQ models
+    probit_lambda[s] <- beta_lambda0 + (beta_lambdaAQ*AQ[s])
+    probit_gamma[s] <- beta_gamma0 + (beta_gammaAQ*AQ[s])
+    mu_theta[s] <- beta_theta0 + (beta_thetaAQ*AQ[s])
+  
+    # priors for precision
+    sigma_lambda[s] ~ dgamma(0.01,0.01)
+    sigma_gamma[s] ~ dgamma(0.01,0.01)
+    sigma_theta[s] ~ dunif(0,10)
+
+    # reparameterising beta prior for learning rate 
+    probit(mu_lambda[s]) <- probit_lambda[s] # probit descale - entered into linear model
+    shape1_lambda[s] <- mu_lambda[s] * sigma_lambda[s]
+    shape2_lambda[s] <- (1 - mu_lambda[s]) * sigma_lambda[s]  
+
+    # reparameterising beta prior for attention learning rate 
+    probit(mu_gamma[s]) <- probit_gamma[s] # probit descale - entered into linear model
+    shape1_gamma[s] <- mu_gamma[s] * sigma_gamma[s]
+    shape2_gamma[s] <- (1 - mu_gamma[s]) * sigma_gamma[s]  
+
+    # reparameterising theta prior for decision noise 
+    rate_theta[s] <- (mu_theta[s] + sqrt(mu_theta[s]^2 + 4*sigma_theta[s]^2 ) ) / ( 2 * sigma_theta[s]^2 )  
+    shape_theta[s] <- 1 + mu_theta[s] * rate_theta[s]
+
+    # priors for learning rates
+    lambda[s] ~ dbeta(shape1_lambda[s]+1,shape2_lambda[s]+1) #weights
+    gamma[s] ~ dbeta(shape1_gamma[s]+1,shape2_gamma[s]+1) #attentional gain
+    
+    # prior for decision noise
+    theta[s] ~ dgamma(shape_theta[s],rate_theta[s])
+  
+    # initial values of weights
+    for (i in 1:10) {
+      for (o in 1:4) {
+        w[1,i,o,s] <- 0
+      }
+    }
+  
+    # initial values of attentional gain
+    for (i in 1:10) {
+      gain[1,i,s] <- 0
+    }
+  
+    # initial values of training signals
+    for (o in 1:4) {
+        T[1,o,s] <- 0 
+    }
+  
+    # initial values of response nodes
+    for (o in 1:4) {
+        r_node[1,o,s] <- 0 
+    }
+  
+    ###########################################
+    #--------- model training trials ---------#
+    ###########################################
+    for (t in 2:80) {
+  
+      # update weights - learning rule eqn 7 from Navarro and Lee
+      for (i in 1:10) {
+        for (o in 1:4) {
+          w[t,i,o,s] <- w[t-1,i,o,s] + (lambda[s]*(T[t-1,o,s]-r_node[t-1,o,s]) * stim[t-1,i,s]) 
+        }
+      }
+  
+      # update attentional gain - modified learning rule eqn 7 from Navarro and Lee
+      for (i in 1:10) {
+        gain[t,i,s] <- gain[t-1,i,s] + (gamma[s]*sum(T[t-1,,s]-r_node[t-1,,s]) * sum(w[t,i,,s]*stim[t-1,i,s])) 
+      }
+      
+      # update output nodes - weights * stimulus inputs * gain
+      for (o in 1:4) { #n resps 
+        r_node[t,o,s] <- (w[t,1,o,s]*stim[t,1,s]*gain[t,1,s]) +
+              (w[t,2,o,s]*stim[t,2,s]*gain[t,2,s]) +
+              (w[t,3,o,s]*stim[t,3,s]*gain[t,3,s]) +
+              (w[t,4,o,s]*stim[t,4,s]*gain[t,4,s]) +
+              (w[t,5,o,s]*stim[t,5,s]*gain[t,5,s]) +
+              (w[t,6,o,s]*stim[t,6,s]*gain[t,6,s]) +
+              (w[t,7,o,s]*stim[t,7,s]*gain[t,7,s]) +
+              (w[t,8,o,s]*stim[t,8,s]*gain[t,8,s]) +
+              (w[t,9,o,s]*stim[t,9,s]*gain[t,9,s]) +
+              (w[t,10,o,s]*stim[t,10,s]*gain[t,10,s])
+      }   
+      
+      # prepare denominator of choice rule 
+      for (o in 1:4) {
+        exp_p[t,o,s] <- exp(theta[s]*r_node[t,o,s])
+      }
+      
+      # choice rule from outputs
+      for (o in 1:4) {
+        p[t,o,s] <- exp_p[t,o,s]/sum(exp_p[t,,s])
+      }
+      
+      # stochastic choice from rule output
+      r[t,s] ~ dcat(p[t,,s])
+      
+      # update training signal - for updating weights on next trial
+      # eqn 5 from Navarro and Lee
+      for (o in 1:4) {
+        T[t,o,s] <- ifelse(R[t,s]==o,max(1,r_node[t,o,s]),min(-1,r_node[t,o,s]))
+      } 
+    
+    }
+  
+  }
+  
+ 
+}
