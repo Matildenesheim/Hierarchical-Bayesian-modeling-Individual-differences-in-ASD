@@ -4,7 +4,7 @@
 
 MSc. Cognitive Science Thesis. 
 
-The present thesis aims to explore whether the underlying associative- or attentional mechanisms can explain individual differences in learning associated with autistic traits. 
+The  thesis aims to explore whether the underlying associative- or attentional mechanisms can explain individual differences in learning associated with autistic traits. 
 To do so, a simplified and ALCOVE-inspired formal model of learning was constructed with the aim of inferring the actual course of learning in four experiments.  
 
 Two attentional learning paradigms (blocking, highlighting) were explored with and without social information to probe for the latent cognitive processes involved in learning associated with autistic traits in both social and non-social contexts - resulting in four experiments. 
