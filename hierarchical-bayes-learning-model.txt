@@ -69,14 +69,14 @@ model {
     ###########################################
     for (t in 2:80) {
   
-      # update weights - learning rule eqn 7 from Navarro and Lee
+      # update weights 
       for (i in 1:10) {
         for (o in 1:4) {
           w[t,i,o,s] <- w[t-1,i,o,s] + (lambda[s]*(T[t-1,o,s]-r_node[t-1,o,s]) * stim[t-1,i,s]) 
         }
       }
   
-      # update attentional gain - modified learning rule eqn 7 from Navarro and Lee
+      # update attentional gain
       for (i in 1:10) {
         gain[t,i,s] <- gain[t-1,i,s] + (gamma[s]*sum(T[t-1,,s]-r_node[t-1,,s]) * sum(w[t,i,,s]*stim[t-1,i,s])) 
       }
@@ -109,7 +109,6 @@ model {
       r[t,s] ~ dcat(p[t,,s])
       
       # update training signal - for updating weights on next trial
-      # eqn 5 from Navarro and Lee
       for (o in 1:4) {
         T[t,o,s] <- ifelse(R[t,s]==o,max(1,r_node[t,o,s]),min(-1,r_node[t,o,s]))
       } 
