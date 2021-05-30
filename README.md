@@ -14,6 +14,9 @@ The simplified ALCOVE-inspired model was employed in hierarchical linear regress
 In addition to exploring whether individual differences in learning could be explained by latent associative- or attentional mechanisms, the relationship between response noise and autistic traits was investigated in all models. This was done to explore whether increased autistic traits would yield atypical response patterns or simply noisier data.
 
 
+The hierarchical models were applied using JAGS through the R2Jags package, and the architecture of the hierarchical model can be seen in the txt. 
+
+
 ### ✉️ Contact
 For further information feel free to connect with the author Matilde Nesheim on [matildenesheim@hotmail.com](mailto:matildenesheim@hotmail.com?subject=[GitHub]%20depression-nlp) or on LinkedIn:
 
