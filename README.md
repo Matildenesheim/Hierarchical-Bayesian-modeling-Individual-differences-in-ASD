@@ -20,7 +20,7 @@ The hierarchical models were applied using JAGS through the R2Jags package, and 
 ### ✉️ Contact
 For further information feel free to connect with the author Matilde Nesheim on [matildenesheim@hotmail.com](mailto:matildenesheim@hotmail.com?subject=[GitHub]%20depression-nlp) or on LinkedIn:
 
-[<img align="left" alt="matildenesheim | LinkedIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />][linkedin]
+[<img align="left" alt="matildenesheim | LinkedIn" width="22px" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" />][linkedin]
 
 <br />
 
