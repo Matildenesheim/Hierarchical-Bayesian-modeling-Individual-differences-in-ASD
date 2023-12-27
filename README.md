@@ -2,8 +2,6 @@
 ### Can underlying processes of associative- or attention mechanisms explain individual differences in learning associated with autistic traits?
 [![describtor - e.g. RStudio version](https://img.shields.io/badge/RStudio%20Version->=3.6.1-green)](www.desired_reference.com)
 
-MSc. Cognitive Science Thesis. 
-
 The  thesis aims to explore whether the underlying associative- or attentional mechanisms can explain individual differences in learning associated with autistic traits. 
 To do so, a simplified and ALCOVE-inspired formal model of learning was constructed with the aim of inferring the actual course of learning in four experiments.  
 
